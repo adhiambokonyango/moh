@@ -59,6 +59,7 @@ class ChildrenTips extends Component {
         };
 
         this.props.registerChildrenTips(payload);
+        this.setState({childrenTipsTitle:''});
     };
 
     render() {
@@ -99,15 +100,10 @@ class ChildrenTips extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.childrenTipsSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>Company Registered SuccessFully</p>
-                </Modal>
-                <Table tableTitle='Registered Companies' tableHeaderObject={this.state.tableHeaders} tableData={this.props.registeredChildrenTips}/>
+
+                <Table tableTitle='Registered childrenTips'
+                       tableHeaderObject={this.state.tableHeaders}
+                       tableData={this.props.registeredChildrenTips}/>
             </div>
         );
     }

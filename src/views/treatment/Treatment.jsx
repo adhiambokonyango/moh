@@ -58,6 +58,7 @@ class Treatment extends Component {
         };
 
         this.props.registerTreatment(payload);
+        this.setState({treatmentTitle:''});
     };
 
     render() {
@@ -98,14 +99,7 @@ class Treatment extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.treatmentSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>Treatment Registered SuccessFully</p>
-                </Modal>
+
                 <Table tableTitle='Registered Treatment'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredTreatment}/>
@@ -132,7 +126,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     registerTreatment: payload => dispatch(registerTreatment(payload)),
-    fetchAllTreatment: () => dispatch(fetchAllTreatment)
+    fetchAllTreatment: () => dispatch(fetchAllTreatment())
 });
 
 export default connect(

@@ -5,12 +5,16 @@ import Modal from "react-awesome-modal";
 import PropTypes from "prop-types";
 import {registerTreatmentDescription, fetchAllTreatmentDescription} from "../../store/modules/treatment_description/actions";
 import Table from "../../components/table/table_body/Table";
+import {fetchAllTreatment} from "../../store/modules/treatment/actions";
+import Select from "react-select";
 
 
 class TreatmentDescription extends Component {
 
     state = {
         treatmentDescription:'',
+        selectedOption: '',
+        selectOptions: [],
 
         tableData: [],
         tableHeaders: {
@@ -23,23 +27,24 @@ class TreatmentDescription extends Component {
 
     componentDidMount() {
         this.props.fetchAllTreatmentDescription();
+        this.props.fetchAllTreatment();
     }
 
-    // componentDidUpdate(prevProps) {
-    //     if(this.props.registeredChildrenTips !== prevProps.registeredChildrenTips) {
-    //         if(this.props.registeredChildrenTips.length > 0) {
-    //             let allregisteredChildrenTips = this.props.registeredChildrenTips;
-    //
-    //             allregisteredChildrenTips = allregisteredChildrenTips.map(item => {
-    //                 return {
-    //                     label: item.registeredChildrenTips,
-    //                     value: item.CompanyId
-    //                 };
-    //             });
-    //             this.setState({ AllCompanies: allregisteredChildrenTips });
-    //         }
-    //     }
-    // };
+    componentDidUpdate(prevProps) {
+        if(this.props.registeredTreatment !== prevProps.registeredTreatment) {
+            if(this.props.registeredTreatment.length > 0) {
+                let allregisteredTreatment = this.props.registeredTreatment;
+
+                allregisteredTreatment = allregisteredTreatment.map(item => {
+                    return {
+                        label: item.TreatmentTitle,
+                        value: item.TreatmentId
+                    };
+                });
+                this.setState({ selectOptions: allregisteredTreatment });
+            }
+        }
+    };
 
 
 
@@ -55,10 +60,12 @@ class TreatmentDescription extends Component {
         e.preventDefault();
 
         const payload = {
+            TreatmentId:this.state.selectedOption.value,
             TreatmentDescription:this.state.treatmentDescription
         };
 
         this.props.registerTreatmentDescription(payload);
+        this.setState({treatmentDescription:''});
     };
 
     render() {
@@ -76,6 +83,25 @@ class TreatmentDescription extends Component {
                             encType="multipart/form-data"
                         >
                             <fieldset>
+
+                                <div className="form-group">
+                                    <Select
+                                        className="react-select"
+                                        classNamePrefix="react-select"
+                                        placeholder="Select Title"
+                                        name="selectedOption"
+                                        closeMenuOnSelect={true}
+                                        value={this.state.selectedOption}
+                                        onChange={value =>
+                                            this.setState({
+                                                ...this.state,
+                                                selectedOption: value
+                                            })
+                                        }
+                                        options={this.state.selectOptions}
+                                    />
+                                </div>
+
                                 <div className="form-group">
                                     <input
                                         name="treatmentDescription"
@@ -99,14 +125,7 @@ class TreatmentDescription extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.treatmentDescriptionSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>treatmentDescription Registered SuccessFully</p>
-                </Modal>
+
                 <Table tableTitle='Registered Companies'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredTreatmentDescription}/>
@@ -121,19 +140,23 @@ TreatmentDescription.propTypes = {
     treatmentDescriptionSuccessFullyRegistered: PropTypes.bool.isRequired,
     fetchAllTreatmentDescription: PropTypes.func.isRequired,
     registeredTreatmentDescription: PropTypes.arrayOf(PropTypes.object).isRequired,
+    fetchAllTreatment: PropTypes.func.isRequired,
+    registeredTreatment: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 
 const mapStateToProps = state => ({
     treatmentDescriptionSuccessFullyRegistered: state.treatment_description.treatmentDescriptionSuccessFullyRegistered,
-    registeredTreatmentDescription: state.treatment_description.registeredTreatmentDescription
+    registeredTreatmentDescription: state.treatment_description.registeredTreatmentDescription,
+    registeredTreatment: state.treatment.registeredTreatment
 });
 
 
 
 const mapDispatchToProps = dispatch => ({
     registerTreatmentDescription: payload => dispatch(registerTreatmentDescription(payload)),
-    fetchAllTreatmentDescription: () => dispatch(fetchAllTreatmentDescription)
+    fetchAllTreatmentDescription: () => dispatch(fetchAllTreatmentDescription),
+    fetchAllTreatment: () => dispatch(fetchAllTreatment())
 });
 
 export default connect(

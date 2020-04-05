@@ -58,6 +58,7 @@ class Travel extends Component {
         };
 
         this.props.registerTravel(payload);
+        this.setState({travelTitle:''});
     };
 
     render() {
@@ -98,14 +99,7 @@ class Travel extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.travelSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>Travel Registered SuccessFully</p>
-                </Modal>
+
                 <Table tableTitle='Registered Travel'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredTravel}/>
@@ -132,7 +126,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     registerTravel: payload => dispatch(registerTravel(payload)),
-    fetchAllTravel: () => dispatch(fetchAllTravel)
+    fetchAllTravel: () => dispatch(fetchAllTravel())
 });
 
 export default connect(

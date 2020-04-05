@@ -5,12 +5,16 @@ import Modal from "react-awesome-modal";
 import PropTypes from "prop-types";
 import {fetchAllStressCopingDescription, registerStressCopingDescription} from "../../store/modules/stress_coping_description/actions";
 import Table from "../../components/table/table_body/Table";
+import {fetchAllStressCoping} from "../../store/modules/stress_coping/actions";
+import Select from "react-select";
 
 
 class StressCopingDescription extends Component {
 
     state = {
         stressCopingDescription:'',
+        selectedOption: '',
+        selectOptions: [],
 
         tableData: [],
         tableHeaders: {
@@ -23,23 +27,24 @@ class StressCopingDescription extends Component {
 
     componentDidMount() {
         this.props.fetchAllStressCopingDescription();
+        this.props.fetchAllStressCoping();
     }
 
-    // componentDidUpdate(prevProps) {
-    //     if(this.props.registeredChildrenTips !== prevProps.registeredChildrenTips) {
-    //         if(this.props.registeredChildrenTips.length > 0) {
-    //             let allregisteredChildrenTips = this.props.registeredChildrenTips;
-    //
-    //             allregisteredChildrenTips = allregisteredChildrenTips.map(item => {
-    //                 return {
-    //                     label: item.registeredChildrenTips,
-    //                     value: item.CompanyId
-    //                 };
-    //             });
-    //             this.setState({ AllCompanies: allregisteredChildrenTips });
-    //         }
-    //     }
-    // };
+    componentDidUpdate(prevProps) {
+        if(this.props.registeredStressCoping !== prevProps.registeredStressCoping) {
+            if(this.props.registeredStressCoping.length > 0) {
+                let allregisteredStressCoping = this.props.registeredStressCoping;
+
+                allregisteredStressCoping = allregisteredStressCoping.map(item => {
+                    return {
+                        label: item.StressCopingTitle,
+                        value: item.StressCopingId
+                    };
+                });
+                this.setState({ selectOptions: allregisteredStressCoping });
+            }
+        }
+    };
 
 
 
@@ -55,10 +60,12 @@ class StressCopingDescription extends Component {
         e.preventDefault();
 
         const payload = {
+            StressCopingId:this.state.selectedOption.value,
             StressCopingDescription:this.state.stressCopingDescription
         };
 
         this.props.registerStressCopingDescription(payload);
+        this.setState({stressCopingDescription:''});
     };
 
     render() {
@@ -76,6 +83,25 @@ class StressCopingDescription extends Component {
                             encType="multipart/form-data"
                         >
                             <fieldset>
+
+                                <div className="form-group">
+                                    <Select
+                                        className="react-select"
+                                        classNamePrefix="react-select"
+                                        placeholder="Select Title"
+                                        name="selectedOption"
+                                        closeMenuOnSelect={true}
+                                        value={this.state.selectedOption}
+                                        onChange={value =>
+                                            this.setState({
+                                                ...this.state,
+                                                selectedOption: value
+                                            })
+                                        }
+                                        options={this.state.selectOptions}
+                                    />
+                                </div>
+
                                 <div className="form-group">
                                     <input
                                         name="stressCopingDescription"
@@ -99,14 +125,7 @@ class StressCopingDescription extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.stressCopingDescriptionSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>stressCopingDescriptionSuccessFullyRegistered</p>
-                </Modal>
+
                 <Table tableTitle='Registered Companies'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredStressCopingDescription}/>
@@ -121,19 +140,23 @@ StressCopingDescription.propTypes = {
     stressCopingDescriptionSuccessFullyRegistered: PropTypes.bool.isRequired,
     fetchAllStressCopingDescription: PropTypes.func.isRequired,
     registeredStressCopingDescription: PropTypes.arrayOf(PropTypes.object).isRequired,
+    fetchAllStressCoping: PropTypes.func.isRequired,
+    registeredStressCoping: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 
 const mapStateToProps = state => ({
     stressCopingDescriptionSuccessFullyRegistered: state.stress_coping_description.stressCopingDescriptionSuccessFullyRegistered,
-    registeredStressCopingDescription: state.stress_coping_description.registeredStressCopingDescription
+    registeredStressCopingDescription: state.stress_coping_description.registeredStressCopingDescription,
+    registeredStressCoping: state.stress_coping.registeredStressCoping
 });
 
 
 
 const mapDispatchToProps = dispatch => ({
     registerStressCopingDescription: payload => dispatch(registerStressCopingDescription(payload)),
-    fetchAllStressCopingDescription: () => dispatch(fetchAllStressCopingDescription)
+    fetchAllStressCopingDescription: () => dispatch(fetchAllStressCopingDescription),
+    fetchAllStressCoping: () => dispatch(fetchAllStressCoping())
 });
 
 export default connect(

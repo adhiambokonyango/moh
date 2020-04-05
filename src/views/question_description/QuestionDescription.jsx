@@ -5,12 +5,17 @@ import Modal from "react-awesome-modal";
 import PropTypes from "prop-types";
 import {fetchAllQuestionDescription, registerQuestionDescription} from "../../store/modules/question_description/actions";
 import Table from "../../components/table/table_body/Table";
+import {fetchAllQuestion} from "../../store/modules/questions/actions";
+import Select from "react-select";
+
 
 
 class QuestionDescription extends Component {
 
     state = {
         questionDescription:'',
+        selectedOption: '',
+        selectOptions: [],
 
         tableData: [],
         tableHeaders: {
@@ -22,24 +27,25 @@ class QuestionDescription extends Component {
 
 
     componentDidMount() {
+        this.props.fetchAllQuestion();
         this.props.fetchAllQuestionDescription();
     }
 
-    // componentDidUpdate(prevProps) {
-    //     if(this.props.registeredChildrenTips !== prevProps.registeredChildrenTips) {
-    //         if(this.props.registeredChildrenTips.length > 0) {
-    //             let allregisteredChildrenTips = this.props.registeredChildrenTips;
-    //
-    //             allregisteredChildrenTips = allregisteredChildrenTips.map(item => {
-    //                 return {
-    //                     label: item.registeredChildrenTips,
-    //                     value: item.CompanyId
-    //                 };
-    //             });
-    //             this.setState({ AllCompanies: allregisteredChildrenTips });
-    //         }
-    //     }
-    // };
+    componentDidUpdate(prevProps) {
+        if(this.props.registeredQuestion !== prevProps.registeredQuestion) {
+            if(this.props.registeredQuestion.length > 0) {
+                let allregisteredQuestion = this.props.registeredQuestion;
+
+                allregisteredQuestion = allregisteredQuestion.map(item => {
+                    return {
+                        label: item.QuestionTitle,
+                        value: item.QuestionId
+                    };
+                });
+                this.setState({ selectOptions: allregisteredQuestion });
+            }
+        }
+    };
 
 
 
@@ -55,10 +61,12 @@ class QuestionDescription extends Component {
         e.preventDefault();
 
         const payload = {
+            QuestionId:this.state.selectedOption.value,
             QuestionDescription:this.state.questionDescription
         };
 
         this.props.registerQuestionDescription(payload);
+        this.setState({questionDescription:''});
     };
 
     render() {
@@ -76,6 +84,25 @@ class QuestionDescription extends Component {
                             encType="multipart/form-data"
                         >
                             <fieldset>
+
+                                <div className="form-group">
+                                    <Select
+                                        className="react-select"
+                                        classNamePrefix="react-select"
+                                        placeholder="Select Title"
+                                        name="selectedOption"
+                                        closeMenuOnSelect={true}
+                                        value={this.state.selectedOption}
+                                        onChange={value =>
+                                            this.setState({
+                                                ...this.state,
+                                                selectedOption: value
+                                            })
+                                        }
+                                        options={this.state.selectOptions}
+                                    />
+                                </div>
+
                                 <div className="form-group">
                                     <input
                                         name="questionDescription"
@@ -99,14 +126,7 @@ class QuestionDescription extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.questionDescriptionSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>questionDescription Registered SuccessFully</p>
-                </Modal>
+
                 <Table tableTitle='Registered Companies'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredQuestionDescription}/>
@@ -121,19 +141,23 @@ QuestionDescription.propTypes = {
     questionDescriptionSuccessFullyRegistered: PropTypes.bool.isRequired,
     fetchAllQuestionDescription: PropTypes.func.isRequired,
     registeredQuestionDescription: PropTypes.arrayOf(PropTypes.object).isRequired,
+    registeredQuestion: PropTypes.arrayOf(PropTypes.object).isRequired,
+    fetchAllQuestion: PropTypes.func.isRequired,
 };
 
 
 const mapStateToProps = state => ({
     questionDescriptionSuccessFullyRegistered: state.question_description.questionDescriptionSuccessFullyRegistered,
-    registeredQuestionDescription: state.question_description.registeredQuestionDescription
+    registeredQuestionDescription: state.question_description.registeredQuestionDescription,
+    registeredQuestion: state.questions.registeredQuestion
 });
 
 
 
 const mapDispatchToProps = dispatch => ({
     registerQuestionDescription: payload => dispatch(registerQuestionDescription(payload)),
-    fetchAllQuestionDescription: () => dispatch(fetchAllQuestionDescription)
+    fetchAllQuestionDescription: () => dispatch(fetchAllQuestionDescription()),
+    fetchAllQuestion: () => dispatch(fetchAllQuestion())
 });
 
 export default connect(

@@ -58,6 +58,7 @@ class Prevention extends Component {
         };
 
         this.props.registerPreventions(payload);
+        this.setState({preventionTitle:''});
     };
 
     render() {
@@ -98,14 +99,7 @@ class Prevention extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.preventionsSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>Measures Registered SuccessFully</p>
-                </Modal>
+
                 <Table tableTitle='Registered Measures'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredPreventions}/>
@@ -132,7 +126,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     registerPreventions: payload => dispatch(registerPreventions(payload)),
-    fetchAllPreventions: () => dispatch(fetchAllPreventions)
+    fetchAllPreventions: () => dispatch(fetchAllPreventions())
 });
 
 export default connect(

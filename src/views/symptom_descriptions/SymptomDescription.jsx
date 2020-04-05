@@ -5,12 +5,16 @@ import Modal from "react-awesome-modal";
 import PropTypes from "prop-types";
 import {fetchAllSymptomDescription, registerSymptomDescription} from "../../store/modules/symptom_descriptions/actions";
 import Table from "../../components/table/table_body/Table";
+import Select from "react-select";
+import {fetchAllSymptom} from "../../store/modules/symptoms/actions";
 
 
 class SymptomDescription extends Component {
 
     state = {
         symptomDescription:'',
+        selectedOption: '',
+        selectOptions: [],
 
         tableData: [],
         tableHeaders: {
@@ -22,24 +26,25 @@ class SymptomDescription extends Component {
 
 
     componentDidMount() {
+        this.props.fetchAllSymptom();
         this.props.fetchAllSymptomDescription();
     }
 
-    // componentDidUpdate(prevProps) {
-    //     if(this.props.registeredChildrenTips !== prevProps.registeredChildrenTips) {
-    //         if(this.props.registeredChildrenTips.length > 0) {
-    //             let allregisteredChildrenTips = this.props.registeredChildrenTips;
-    //
-    //             allregisteredChildrenTips = allregisteredChildrenTips.map(item => {
-    //                 return {
-    //                     label: item.registeredChildrenTips,
-    //                     value: item.CompanyId
-    //                 };
-    //             });
-    //             this.setState({ AllCompanies: allregisteredChildrenTips });
-    //         }
-    //     }
-    // };
+    componentDidUpdate(prevProps) {
+        if(this.props.registeredSymptom !== prevProps.registeredSymptom) {
+            if(this.props.registeredSymptom.length > 0) {
+                let allregisteredSymptom = this.props.registeredSymptom;
+
+                allregisteredSymptom = allregisteredSymptom.map(item => {
+                    return {
+                        label: item.SymptomTitle,
+                        value: item.SymptomId
+                    };
+                });
+                this.setState({ selectOptions: allregisteredSymptom });
+            }
+        }
+    };
 
 
 
@@ -55,10 +60,12 @@ class SymptomDescription extends Component {
         e.preventDefault();
 
         const payload = {
+            SymptomId:this.state.selectedOption.value,
             SymptomDescription:this.state.symptomDescription
         };
 
         this.props.registerSymptomDescription(payload);
+        this.setState({symptomDescription:''});
     };
 
     render() {
@@ -76,6 +83,25 @@ class SymptomDescription extends Component {
                             encType="multipart/form-data"
                         >
                             <fieldset>
+
+                                <div className="form-group">
+                                    <Select
+                                        className="react-select"
+                                        classNamePrefix="react-select"
+                                        placeholder="Select Title"
+                                        name="selectedOption"
+                                        closeMenuOnSelect={true}
+                                        value={this.state.selectedOption}
+                                        onChange={value =>
+                                            this.setState({
+                                                ...this.state,
+                                                selectedOption: value
+                                            })
+                                        }
+                                        options={this.state.selectOptions}
+                                    />
+                                </div>
+
                                 <div className="form-group">
                                     <input
                                         name="symptomDescription"
@@ -99,14 +125,7 @@ class SymptomDescription extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.symptomDescriptionSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>SymptomDescription Registered SuccessFully</p>
-                </Modal>
+
                 <Table tableTitle='Registered SymptomDescription'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredSymptomDescription}/>
@@ -121,19 +140,23 @@ SymptomDescription.propTypes = {
     symptomDescriptionSuccessFullyRegistered: PropTypes.bool.isRequired,
     fetchAllSymptomDescription: PropTypes.func.isRequired,
     registeredSymptomDescription: PropTypes.arrayOf(PropTypes.object).isRequired,
+    fetchAllSymptom: PropTypes.func.isRequired,
+    registeredSymptom: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 
 const mapStateToProps = state => ({
     symptomDescriptionSuccessFullyRegistered: state.symptom_descriptions.symptomDescriptionSuccessFullyRegistered,
-    registeredSymptomDescription: state.symptom_descriptions.registeredSymptomDescription
+    registeredSymptomDescription: state.symptom_descriptions.registeredSymptomDescription,
+    registeredSymptom: state.symptoms.registeredSymptom
 });
 
 
 
 const mapDispatchToProps = dispatch => ({
     registerSymptomDescription: payload => dispatch(registerSymptomDescription(payload)),
-    fetchAllSymptomDescription: () => dispatch(fetchAllSymptomDescription)
+    fetchAllSymptomDescription: () => dispatch(fetchAllSymptomDescription()),
+    fetchAllSymptom: () => dispatch(fetchAllSymptom())
 });
 
 export default connect(

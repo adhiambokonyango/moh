@@ -58,6 +58,7 @@ class Measure extends Component {
         };
 
         this.props.registerMeasure(payload);
+
     };
 
     render() {
@@ -98,14 +99,7 @@ class Measure extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.measureSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>Measures Registered SuccessFully</p>
-                </Modal>
+
                 <Table tableTitle='Registered Measures'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredMeasure}/>
@@ -132,7 +126,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     registerMeasure: payload => dispatch(registerMeasure(payload)),
-    fetchAllMeasure: () => dispatch(fetchAllMeasure)
+    fetchAllMeasure: () => dispatch(fetchAllMeasure())
 });
 
 export default connect(

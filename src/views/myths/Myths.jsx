@@ -58,6 +58,7 @@ class Myths extends Component {
         };
 
         this.props.registerMyths(payload);
+        this.setState({mythsTitle:''});
     };
 
     render() {
@@ -98,14 +99,7 @@ class Myths extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.mythsSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>Measures Registered SuccessFully</p>
-                </Modal>
+
                 <Table tableTitle='Registered Measures'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredMyths}/>
@@ -132,7 +126,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     registerMyths: payload => dispatch(registerMyths(payload)),
-    fetchAllMyths: () => dispatch(fetchAllMyths)
+    fetchAllMyths: () => dispatch(fetchAllMyths())
 });
 
 export default connect(

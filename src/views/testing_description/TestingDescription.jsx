@@ -5,12 +5,16 @@ import Modal from "react-awesome-modal";
 import PropTypes from "prop-types";
 import {fetchAllTestingDescription, registerTestingDescription} from "../../store/modules/testing_description/actions";
 import Table from "../../components/table/table_body/Table";
+import {fetchAllTesting} from "../../store/modules/testing/actions";
+import Select from "react-select";
 
 
 class TestingDescription extends Component {
 
     state = {
         testingDescription:'',
+        selectedOption: '',
+        selectOptions: [],
 
         tableData: [],
         tableHeaders: {
@@ -23,23 +27,24 @@ class TestingDescription extends Component {
 
     componentDidMount() {
         this.props.fetchAllTestingDescription();
+        this.props.fetchAllTesting();
     }
 
-    // componentDidUpdate(prevProps) {
-    //     if(this.props.registeredChildrenTips !== prevProps.registeredChildrenTips) {
-    //         if(this.props.registeredChildrenTips.length > 0) {
-    //             let allregisteredChildrenTips = this.props.registeredChildrenTips;
-    //
-    //             allregisteredChildrenTips = allregisteredChildrenTips.map(item => {
-    //                 return {
-    //                     label: item.registeredChildrenTips,
-    //                     value: item.CompanyId
-    //                 };
-    //             });
-    //             this.setState({ AllCompanies: allregisteredChildrenTips });
-    //         }
-    //     }
-    // };
+    componentDidUpdate(prevProps) {
+        if(this.props.registeredTesting !== prevProps.registeredTesting) {
+            if(this.props.registeredTesting.length > 0) {
+                let allregisteredTesting = this.props.registeredTesting;
+
+                allregisteredTesting = allregisteredTesting.map(item => {
+                    return {
+                        label: item.TestingTitle,
+                        value: item.TestingId
+                    };
+                });
+                this.setState({ selectOptions: allregisteredTesting });
+            }
+        }
+    };
 
 
 
@@ -55,10 +60,12 @@ class TestingDescription extends Component {
         e.preventDefault();
 
         const payload = {
+            TestingId:this.state.selectedOption.value,
             TestingDescription:this.state.testingDescription
         };
 
         this.props.registerTestingDescription(payload);
+        this.setState({testingDescription:''});
     };
 
     render() {
@@ -76,6 +83,25 @@ class TestingDescription extends Component {
                             encType="multipart/form-data"
                         >
                             <fieldset>
+
+                                <div className="form-group">
+                                    <Select
+                                        className="react-select"
+                                        classNamePrefix="react-select"
+                                        placeholder="Select Title"
+                                        name="selectedOption"
+                                        closeMenuOnSelect={true}
+                                        value={this.state.selectedOption}
+                                        onChange={value =>
+                                            this.setState({
+                                                ...this.state,
+                                                selectedOption: value
+                                            })
+                                        }
+                                        options={this.state.selectOptions}
+                                    />
+                                </div>
+
                                 <div className="form-group">
                                     <input
                                         name="testingDescription"
@@ -99,14 +125,7 @@ class TestingDescription extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.testingDescriptionSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>TestingDescription Registered SuccessFully</p>
-                </Modal>
+
                 <Table tableTitle='Registered TestingDescription'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredTestingDescription}/>
@@ -121,19 +140,23 @@ TestingDescription.propTypes = {
     testingDescriptionSuccessFullyRegistered: PropTypes.bool.isRequired,
     fetchAllTestingDescription: PropTypes.func.isRequired,
     registeredTestingDescription: PropTypes.arrayOf(PropTypes.object).isRequired,
+    fetchAllTesting: PropTypes.func.isRequired,
+    registeredTesting: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 
 const mapStateToProps = state => ({
     testingDescriptionSuccessFullyRegistered: state.testing_description.testingDescriptionSuccessFullyRegistered,
-    registeredTestingDescription: state.testing_description.registeredTestingDescription
+    registeredTestingDescription: state.testing_description.registeredTestingDescription,
+    registeredTesting: state.testing.registeredTesting
 });
 
 
 
 const mapDispatchToProps = dispatch => ({
     registerTestingDescription: payload => dispatch(registerTestingDescription(payload)),
-    fetchAllTestingDescription: () => dispatch(fetchAllTestingDescription)
+    fetchAllTestingDescription: () => dispatch(fetchAllTestingDescription()),
+    fetchAllTesting: () => dispatch(fetchAllTesting())
 });
 
 export default connect(

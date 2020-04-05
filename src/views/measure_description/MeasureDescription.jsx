@@ -1,17 +1,20 @@
 import React, {Component} from 'react';
-
 import { connect } from "react-redux";
 import Modal from "react-awesome-modal";
 import PropTypes from "prop-types";
 import {fetchAllMeasureDescription, registerMeasureDescription} from "../../store/modules/measure_description/actions";
 import Table from "../../components/table/table_body/Table";
+import {fetchAllMeasure} from "../../store/modules/measure/actions";
+import Select from "react-select";
+import {fetchAllChildrenTips} from "../../store/modules/children_tips/actions";
 
 
 class MeasureDescription extends Component {
 
     state = {
         measureDescription:'',
-
+        selectedOption: '',
+        selectOptions: [],
         tableData: [],
         tableHeaders: {
             MeasureDescriptionId:'#',
@@ -23,23 +26,24 @@ class MeasureDescription extends Component {
 
     componentDidMount() {
         this.props.fetchAllMeasureDescription();
+        this.props.fetchAllMeasure();
     }
 
-    // componentDidUpdate(prevProps) {
-    //     if(this.props.registeredChildrenTips !== prevProps.registeredChildrenTips) {
-    //         if(this.props.registeredChildrenTips.length > 0) {
-    //             let allregisteredChildrenTips = this.props.registeredChildrenTips;
-    //
-    //             allregisteredChildrenTips = allregisteredChildrenTips.map(item => {
-    //                 return {
-    //                     label: item.registeredChildrenTips,
-    //                     value: item.CompanyId
-    //                 };
-    //             });
-    //             this.setState({ AllCompanies: allregisteredChildrenTips });
-    //         }
-    //     }
-    // };
+    componentDidUpdate(prevProps) {
+        if(this.props.registeredMeasure !== prevProps.registeredMeasure) {
+            if(this.props.registeredMeasure.length > 0) {
+                let allregisteredMeasure = this.props.registeredMeasure;
+
+                allregisteredMeasure = allregisteredMeasure.map(item => {
+                    return {
+                        label: item.MeasureTitle,
+                        value: item.MeasureId
+                    };
+                });
+                this.setState({ selectOptions: allregisteredMeasure });
+            }
+        }
+    };
 
 
 
@@ -55,10 +59,12 @@ class MeasureDescription extends Component {
         e.preventDefault();
 
         const payload = {
-            MeasureDescription:this.state.measureDescription
+            MeasureDescription:this.state.measureDescription,
+            MeasureId:this.state.selectedOption.value,
         };
 
         this.props.registerMeasureDescription(payload);
+        this.setState({measureDescription:''});
     };
 
     render() {
@@ -76,6 +82,25 @@ class MeasureDescription extends Component {
                             encType="multipart/form-data"
                         >
                             <fieldset>
+
+                                <div className="form-group">
+                                    <Select
+                                        className="react-select"
+                                        classNamePrefix="react-select"
+                                        placeholder="Select Title"
+                                        name="selectedOption"
+                                        closeMenuOnSelect={true}
+                                        value={this.state.selectedOption}
+                                        onChange={value =>
+                                            this.setState({
+                                                ...this.state,
+                                                selectedOption: value
+                                            })
+                                        }
+                                        options={this.state.selectOptions}
+                                    />
+                                </div>
+
                                 <div className="form-group">
                                     <input
                                         name="measureDescription"
@@ -99,15 +124,8 @@ class MeasureDescription extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.measureDescriptionSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>measureDescription Registered SuccessFully</p>
-                </Modal>
-                <Table tableTitle='Registered Companies'
+
+                <Table tableTitle='Registered MeasureDescription'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredMeasureDescription}/>
             </div>
@@ -121,19 +139,23 @@ MeasureDescription.propTypes = {
     measureDescriptionSuccessFullyRegistered: PropTypes.bool.isRequired,
     fetchAllMeasureDescription: PropTypes.func.isRequired,
     registeredMeasureDescription: PropTypes.arrayOf(PropTypes.object).isRequired,
+    fetchAllMeasure: PropTypes.func.isRequired,
+    registeredMeasure: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 
 const mapStateToProps = state => ({
     measureDescriptionSuccessFullyRegistered: state.measure_description.measureDescriptionSuccessFullyRegistered,
-    registeredMeasureDescription: state.measure_description.registeredMeasureDescription
+    registeredMeasureDescription: state.measure_description.registeredMeasureDescription,
+    registeredMeasure: state.measure.registeredMeasure
 });
 
 
 
 const mapDispatchToProps = dispatch => ({
     registerMeasureDescription: payload => dispatch(registerMeasureDescription(payload)),
-    fetchAllMeasureDescription: () => dispatch(fetchAllMeasureDescription)
+    fetchAllMeasureDescription: () => dispatch(fetchAllMeasureDescription()),
+    fetchAllMeasure: () => dispatch(fetchAllMeasure())
 });
 
 export default connect(

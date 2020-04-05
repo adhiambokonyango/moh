@@ -58,6 +58,7 @@ class Symptom extends Component {
         };
 
         this.props.registerSymptom(payload);
+        this.setState({symptomsTitle:''});
     };
 
     render() {
@@ -98,14 +99,7 @@ class Symptom extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.symptomsSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>Measures Registered SuccessFully</p>
-                </Modal>
+
                 <Table tableTitle='Registered Measures'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredSymptom}/>
@@ -132,7 +126,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     registerSymptom: payload => dispatch(registerSymptom(payload)),
-    fetchAllSymptom: () => dispatch(fetchAllSymptom)
+    fetchAllSymptom: () => dispatch(fetchAllSymptom())
 });
 
 export default connect(

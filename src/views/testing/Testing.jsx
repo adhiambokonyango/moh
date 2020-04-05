@@ -58,6 +58,7 @@ class Testing extends Component {
         };
 
         this.props.registerTesting(payload);
+        this.setState({testingTitle:''});
     };
 
     render() {
@@ -98,14 +99,7 @@ class Testing extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.testingSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>Testing Registered SuccessFully</p>
-                </Modal>
+
                 <Table tableTitle='Registered Testing'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredTesting}/>
@@ -132,7 +126,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     registerTesting: payload => dispatch(registerTesting(payload)),
-    fetchAllTesting: () => dispatch(fetchAllTesting)
+    fetchAllTesting: () => dispatch(fetchAllTesting())
 });
 
 export default connect(

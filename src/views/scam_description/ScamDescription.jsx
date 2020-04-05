@@ -5,12 +5,16 @@ import Modal from "react-awesome-modal";
 import PropTypes from "prop-types";
 import {fetchAllScamDescription, registerScamDescription} from "../../store/modules/scam_description/actions";
 import Table from "../../components/table/table_body/Table";
+import {fetchAllScam} from "../../store/modules/scams/actions";
+import Select from "react-select";
 
 
 class ScamDescription extends Component {
 
     state = {
         scamDescription:'',
+        selectedOption: '',
+        selectOptions: [],
 
         tableData: [],
         tableHeaders: {
@@ -22,24 +26,25 @@ class ScamDescription extends Component {
 
 
     componentDidMount() {
+        this.props.fetchAllScam();
         this.props.fetchAllScamDescription();
     }
 
-    // componentDidUpdate(prevProps) {
-    //     if(this.props.registeredChildrenTips !== prevProps.registeredChildrenTips) {
-    //         if(this.props.registeredChildrenTips.length > 0) {
-    //             let allregisteredChildrenTips = this.props.registeredChildrenTips;
-    //
-    //             allregisteredChildrenTips = allregisteredChildrenTips.map(item => {
-    //                 return {
-    //                     label: item.registeredChildrenTips,
-    //                     value: item.CompanyId
-    //                 };
-    //             });
-    //             this.setState({ AllCompanies: allregisteredChildrenTips });
-    //         }
-    //     }
-    // };
+    componentDidUpdate(prevProps) {
+        if(this.props.registeredScam !== prevProps.registeredScam) {
+            if(this.props.registeredScam.length > 0) {
+                let allregisteredScam = this.props.registeredScam;
+
+                allregisteredScam = allregisteredScam.map(item => {
+                    return {
+                        label: item.ScamTitle,
+                        value: item.ScamId
+                    };
+                });
+                this.setState({ selectOptions: allregisteredScam });
+            }
+        }
+    };
 
 
 
@@ -55,10 +60,12 @@ class ScamDescription extends Component {
         e.preventDefault();
 
         const payload = {
+            ScamId:this.state.selectedOption.value,
             ScamDescription:this.state.scamDescription
         };
 
         this.props.registerScamDescription(payload);
+        this.setState({scamDescription:''});
     };
 
     render() {
@@ -76,6 +83,25 @@ class ScamDescription extends Component {
                             encType="multipart/form-data"
                         >
                             <fieldset>
+
+                                <div className="form-group">
+                                    <Select
+                                        className="react-select"
+                                        classNamePrefix="react-select"
+                                        placeholder="Select Title"
+                                        name="selectedOption"
+                                        closeMenuOnSelect={true}
+                                        value={this.state.selectedOption}
+                                        onChange={value =>
+                                            this.setState({
+                                                ...this.state,
+                                                selectedOption: value
+                                            })
+                                        }
+                                        options={this.state.selectOptions}
+                                    />
+                                </div>
+
                                 <div className="form-group">
                                     <input
                                         name="scamDescription"
@@ -99,14 +125,7 @@ class ScamDescription extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.scamDescriptionSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>measureDescription Registered SuccessFully</p>
-                </Modal>
+
                 <Table tableTitle='Registered Companies'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredScamDescription}/>
@@ -121,19 +140,23 @@ ScamDescription.propTypes = {
     scamDescriptionSuccessFullyRegistered: PropTypes.bool.isRequired,
     fetchAllScamDescription: PropTypes.func.isRequired,
     registeredScamDescription: PropTypes.arrayOf(PropTypes.object).isRequired,
+    registeredScam: PropTypes.arrayOf(PropTypes.object).isRequired,
+    fetchAllScam: PropTypes.func.isRequired,
 };
 
 
 const mapStateToProps = state => ({
     scamDescriptionSuccessFullyRegistered: state.scam_description.scamDescriptionSuccessFullyRegistered,
-    registeredScamDescription: state.scam_description.registeredScamDescription
+    registeredScamDescription: state.scam_description.registeredScamDescription,
+    registeredScam: state.scams.registeredScam
 });
 
 
 
 const mapDispatchToProps = dispatch => ({
     registerScamDescription: payload => dispatch(registerScamDescription(payload)),
-    fetchAllScamDescription: () => dispatch(fetchAllScamDescription)
+    fetchAllScamDescription: () => dispatch(fetchAllScamDescription()),
+    fetchAllScam: () => dispatch(fetchAllScam())
 });
 
 export default connect(

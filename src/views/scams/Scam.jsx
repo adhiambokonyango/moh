@@ -5,7 +5,7 @@ import Modal from "react-awesome-modal";
 import PropTypes from "prop-types";
 import {fetchAllScam, registerScam} from "../../store/modules/scams/actions";
 import Table from "../../components/table/table_body/Table";
-import {reducer as scams} from "../../store/modules/scams";
+
 
 class Scam extends Component {
 
@@ -59,6 +59,7 @@ class Scam extends Component {
         };
 
         this.props.registerScam(payload);
+        this.setState({scamTitle:''});
     };
 
     render() {
@@ -99,14 +100,7 @@ class Scam extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.scamsSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>Measures Registered SuccessFully</p>
-                </Modal>
+
                 <Table tableTitle='Registered Measures'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredScam}/>
@@ -133,7 +127,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     registerScam: payload => dispatch(registerScam(payload)),
-    fetchAllScam: () => dispatch(fetchAllScam)
+    fetchAllScam: () => dispatch(fetchAllScam())
 });
 
 export default connect(

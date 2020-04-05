@@ -1,16 +1,19 @@
 import React, {Component} from 'react';
-
 import { connect } from "react-redux";
-import Modal from "react-awesome-modal";
+
 import PropTypes from "prop-types";
 import {fetchAllMythsDescription, registerMythsDescription} from "../../store/modules/myths_description/actions";
 import Table from "../../components/table/table_body/Table";
-import {reducer as myths_description} from "../../store/modules/myths_description";
+import {fetchAllMyths} from "../../store/modules/myths/actions";
+import Select from "react-select";
+
 
 class MythsDescription extends Component {
 
     state = {
         mythsDescription:'',
+        selectedOption: '',
+        selectOptions: [],
 
         tableData: [],
         tableHeaders: {
@@ -23,23 +26,25 @@ class MythsDescription extends Component {
 
     componentDidMount() {
         this.props.fetchAllMythsDescription();
+        this.props.fetchAllMyths();
     }
 
-    // componentDidUpdate(prevProps) {
-    //     if(this.props.registeredChildrenTips !== prevProps.registeredChildrenTips) {
-    //         if(this.props.registeredChildrenTips.length > 0) {
-    //             let allregisteredChildrenTips = this.props.registeredChildrenTips;
-    //
-    //             allregisteredChildrenTips = allregisteredChildrenTips.map(item => {
-    //                 return {
-    //                     label: item.registeredChildrenTips,
-    //                     value: item.CompanyId
-    //                 };
-    //             });
-    //             this.setState({ AllCompanies: allregisteredChildrenTips });
-    //         }
-    //     }
-    // };
+    componentDidUpdate(prevProps) {
+        if(this.props.registeredMyths !== prevProps.registeredMyths) {
+            if(this.props.registeredMyths.length > 0) {
+                let allregisteredMyths = this.props.registeredMyths;
+
+                allregisteredMyths = allregisteredMyths.map(item => {
+                    return {
+                        label: item.MythsTitle,
+                        value: item.MythsId
+                    };
+                });
+                this.setState({ selectOptions: allregisteredMyths });
+            }
+        }
+    };
+
 
 
 
@@ -55,10 +60,12 @@ class MythsDescription extends Component {
         e.preventDefault();
 
         const payload = {
+            MythsId:this.state.selectedOption.value,
             MythsDescription:this.state.mythsDescription
         };
 
         this.props.registerMythsDescription(payload);
+        this.setState({mythsDescription:''});
     };
 
     render() {
@@ -76,6 +83,25 @@ class MythsDescription extends Component {
                             encType="multipart/form-data"
                         >
                             <fieldset>
+
+                                <div className="form-group">
+                                    <Select
+                                        className="react-select"
+                                        classNamePrefix="react-select"
+                                        placeholder="Select Title"
+                                        name="selectedOption"
+                                        closeMenuOnSelect={true}
+                                        value={this.state.selectedOption}
+                                        onChange={value =>
+                                            this.setState({
+                                                ...this.state,
+                                                selectedOption: value
+                                            })
+                                        }
+                                        options={this.state.selectOptions}
+                                    />
+                                </div>
+
                                 <div className="form-group">
                                     <input
                                         name="mythsDescription"
@@ -99,14 +125,7 @@ class MythsDescription extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.mythsDescriptionSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>mythsDescription Registered SuccessFully</p>
-                </Modal>
+
                 <Table tableTitle='Registered myths'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredMythsDescription}/>
@@ -121,19 +140,23 @@ MythsDescription.propTypes = {
     mythsDescriptionSuccessFullyRegistered: PropTypes.bool.isRequired,
     fetchAllMythsDescription: PropTypes.func.isRequired,
     registeredMythsDescription: PropTypes.arrayOf(PropTypes.object).isRequired,
+    fetchAllMyths: PropTypes.func.isRequired,
+    registeredMyths: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 
 const mapStateToProps = state => ({
     myDescriptionSuccessFullyRegistered: state.myths_description.myDescriptionSuccessFullyRegistered,
-    registeredMythsDescription: state.myths_description.registeredMythsDescription
+    registeredMythsDescription: state.myths_description.registeredMythsDescription,
+    registeredMyths: state.myths.registeredMyths
 });
 
 
 
 const mapDispatchToProps = dispatch => ({
     registerMythsDescription: payload => dispatch(registerMythsDescription(payload)),
-    fetchAllMythsDescription: () => dispatch(fetchAllMythsDescription)
+    fetchAllMythsDescription: () => dispatch(fetchAllMythsDescription()),
+    fetchAllMyths: () => dispatch(fetchAllMyths())
 });
 
 export default connect(

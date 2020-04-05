@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 
-import Select from "react-select";
+import Table from "../../components/table/table_body/Table";
 import { connect } from "react-redux";
 import Modal from "react-awesome-modal";
 import PropTypes from "prop-types";
 import {fetchAllChildrenTipsDescription, registerChildrenTipsDescription} from "../../store/modules/children_tips_description/actions";
 import {fetchAllChildrenTips} from "../../store/modules/children_tips/actions";
-import Table from "../../components/table/table_body/Table";
+import Select from "react-select";
+
 
 
 class ChildrenTipsDescription extends Component {
@@ -91,7 +92,7 @@ class ChildrenTipsDescription extends Component {
                                         placeholder="Select Title"
                                         name="selectedOption"
                                         closeMenuOnSelect={true}
-                                        value={this.state.SelectedCompanyId}
+                                        value={this.state.selectedOption}
                                         onChange={value =>
                                             this.setState({
                                                 ...this.state,
@@ -118,11 +119,6 @@ class ChildrenTipsDescription extends Component {
 
                                 </div>
 
-
-
-
-
-
                                 <button
                                     type="submit"
                                     className="btn btn-lg btn-success btn-block"
@@ -134,7 +130,7 @@ class ChildrenTipsDescription extends Component {
                     </div>
                 </div>
 
-                <Table tableTitle='Registered Companies'
+                <Table tableTitle='Registered ChildrenTipsDescription'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredChildrenTipsDescription}/>
             </div>
@@ -145,11 +141,11 @@ class ChildrenTipsDescription extends Component {
 
 ChildrenTipsDescription.propTypes = {
     registerChildrenTipsDescription: PropTypes.func.isRequired,
-    fetchAllChildrenTips: PropTypes.func.isRequired,
     childrenTipsDescriptionSuccessFullyRegistered: PropTypes.bool.isRequired,
     fetchAllChildrenTipsDescription: PropTypes.func.isRequired,
     registeredChildrenTipsDescription: PropTypes.arrayOf(PropTypes.object).isRequired,
     registeredChildrenTips: PropTypes.arrayOf(PropTypes.object).isRequired,
+    fetchAllChildrenTips: PropTypes.func.isRequired,
 };
 
 

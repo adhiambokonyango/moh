@@ -58,6 +58,7 @@ class Question extends Component {
         };
 
         this.props.registerQuestion(payload);
+        this.setState({questionTitle:''});
     };
 
     render() {
@@ -98,14 +99,7 @@ class Question extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.questionsSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>Measures Registered SuccessFully</p>
-                </Modal>
+
                 <Table tableTitle='Registered Measures'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredQuestion}/>
@@ -132,7 +126,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     registerQuestion: payload => dispatch(registerQuestion(payload)),
-    fetchAllQuestion: () => dispatch(fetchAllQuestion)
+    fetchAllQuestion: () => dispatch(fetchAllQuestion())
 });
 
 export default connect(

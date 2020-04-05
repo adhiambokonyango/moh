@@ -5,12 +5,16 @@ import Modal from "react-awesome-modal";
 import PropTypes from "prop-types";
 import {fetchAllTravelDescription, registerTravelDescription} from "../../store/modules/travel_description/actions";
 import Table from "../../components/table/table_body/Table";
+import {fetchAllTravel} from "../../store/modules/travel/actions";
+import Select from "react-select";
 
 
 class TravelDescription extends Component {
 
     state = {
         travelDescription:'',
+        selectedOption: '',
+        selectOptions: [],
 
         tableData: [],
         tableHeaders: {
@@ -22,24 +26,25 @@ class TravelDescription extends Component {
 
 
     componentDidMount() {
+        this.props.fetchAllTravel();
         this.props.fetchAllTravelDescription();
     }
 
-    // componentDidUpdate(prevProps) {
-    //     if(this.props.registeredChildrenTips !== prevProps.registeredChildrenTips) {
-    //         if(this.props.registeredChildrenTips.length > 0) {
-    //             let allregisteredChildrenTips = this.props.registeredChildrenTips;
-    //
-    //             allregisteredChildrenTips = allregisteredChildrenTips.map(item => {
-    //                 return {
-    //                     label: item.registeredChildrenTips,
-    //                     value: item.CompanyId
-    //                 };
-    //             });
-    //             this.setState({ AllCompanies: allregisteredChildrenTips });
-    //         }
-    //     }
-    // };
+    componentDidUpdate(prevProps) {
+        if(this.props.registeredTravel !== prevProps.registeredTravel) {
+            if(this.props.registeredTravel.length > 0) {
+                let allregisteredTravel = this.props.registeredTravel;
+
+                allregisteredTravel = allregisteredTravel.map(item => {
+                    return {
+                        label: item.TravelTitle,
+                        value: item.TravelId
+                    };
+                });
+                this.setState({ selectOptions: allregisteredTravel });
+            }
+        }
+    };
 
 
 
@@ -55,10 +60,12 @@ class TravelDescription extends Component {
         e.preventDefault();
 
         const payload = {
+            TravelId:this.state.selectedOption.value,
             TravelDescription:this.state.travelDescription
         };
 
         this.props.registerTravelDescription(payload);
+        this.setState({travelDescription:''});
     };
 
     render() {
@@ -76,6 +83,25 @@ class TravelDescription extends Component {
                             encType="multipart/form-data"
                         >
                             <fieldset>
+
+                                <div className="form-group">
+                                    <Select
+                                        className="react-select"
+                                        classNamePrefix="react-select"
+                                        placeholder="Select Title"
+                                        name="selectedOption"
+                                        closeMenuOnSelect={true}
+                                        value={this.state.selectedOption}
+                                        onChange={value =>
+                                            this.setState({
+                                                ...this.state,
+                                                selectedOption: value
+                                            })
+                                        }
+                                        options={this.state.selectOptions}
+                                    />
+                                </div>
+
                                 <div className="form-group">
                                     <input
                                         name="travelDescription"
@@ -99,14 +125,7 @@ class TravelDescription extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.travelDescriptionSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>travelDescription Registered SuccessFully</p>
-                </Modal>
+
                 <Table tableTitle='Registered travelDescription'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredTravelDescription}/>
@@ -121,19 +140,23 @@ TravelDescription.propTypes = {
     travelDescriptionSuccessFullyRegistered: PropTypes.bool.isRequired,
     fetchAllTravelDescription: PropTypes.func.isRequired,
     registeredTravelDescription: PropTypes.arrayOf(PropTypes.object).isRequired,
+    fetchAllTravel: PropTypes.func.isRequired,
+    registeredTravel: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 
 const mapStateToProps = state => ({
     travelDescriptionSuccessFullyRegistered: state.travel_description.travelDescriptionSuccessFullyRegistered,
-    registeredTravelDescription: state.travel_description.registeredTravelDescription
+    registeredTravelDescription: state.travel_description.registeredTravelDescription,
+    registeredTravel: state.travel.registeredTravel
 });
 
 
 
 const mapDispatchToProps = dispatch => ({
     registerTravelDescription: payload => dispatch(registerTravelDescription(payload)),
-    fetchAllTravelDescription: () => dispatch(fetchAllTravelDescription)
+    fetchAllTravelDescription: () => dispatch(fetchAllTravelDescription()),
+    fetchAllTravel: () => dispatch(fetchAllTravel())
 });
 
 export default connect(

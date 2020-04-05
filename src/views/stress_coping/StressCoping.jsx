@@ -58,6 +58,7 @@ class StressCoping extends Component {
         };
 
         this.props.registerStressCoping(payload);
+        this.setState({stressTitle:''});
     };
 
     render() {
@@ -98,14 +99,7 @@ class StressCoping extends Component {
                         </form>
                     </div>
                 </div>
-                <Modal
-                    visible={this.props.stressCopingSuccessFullyRegistered}
-                    width="300"
-                    height="300"
-                    effect="fadeInUp"
-                >
-                    <p>stressCopingSuccessFullyRegistered</p>
-                </Modal>
+
                 <Table tableTitle='registeredStressCoping'
                        tableHeaderObject={this.state.tableHeaders}
                        tableData={this.props.registeredStressCoping}/>
@@ -132,7 +126,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     registerStressCoping: payload => dispatch(registerStressCoping(payload)),
-    fetchAllStressCoping: () => dispatch(fetchAllStressCoping)
+    fetchAllStressCoping: () => dispatch(fetchAllStressCoping())
 });
 
 export default connect(
