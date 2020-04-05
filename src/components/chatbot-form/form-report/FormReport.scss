@@ -1,0 +1,51 @@
+.report {
+  &__content-div {
+    max-width: 723px;
+    margin-top: 172px;
+    border-radius: 6px;
+    background-color: #f8f8f8;
+    padding-top: 22px;
+    padding-bottom: 22px;
+    padding-left: 12px;
+    padding-right: 12px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: auto;
+  }
+
+
+  &__close-icon {
+    margin-top: 0.5rem;
+    margin-right: 0.5rem;
+    font-size: 26px;
+    float: right;
+    cursor: pointer;
+    clear: both;
+  }
+
+  &__first-row {
+    width: 100%;
+    height: auto;
+    margin-bottom: 1rem;
+  }
+
+  &__content-row {
+    width: 100%;
+    height: auto;
+  }
+
+  &__left-column {
+    float: left;
+  }
+
+  &__right-column {
+    float: right;
+  }
+
+  &__middle-stroke {
+    height: 100%;
+    margin: auto;
+    width: 1px;
+    border: solid 1px #e6e6e6;
+  }
+}
