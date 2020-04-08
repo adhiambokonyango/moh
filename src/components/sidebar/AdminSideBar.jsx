@@ -22,7 +22,10 @@ import {
     DISPLAY_SYMPTOMDESCRIPTION_PAGE,
     DISPLAY_TESTING_PAGE,
     DISPLAY_TESTINGDESCRIPTION_PAGE,
-    DISPLAY_TRAVEL_PAGE, DISPLAY_TRAVELDESCRIPTION_PAGE, DISPLAY_TREATMENT_PAGE, DISPLAY_TREATMENTDESCRIPTION_PAGE
+    DISPLAY_TRAVEL_PAGE,
+    DISPLAY_TRAVELDESCRIPTION_PAGE,
+    DISPLAY_TREATMENT_PAGE,
+    DISPLAY_TREATMENTDESCRIPTION_PAGE, DISPLAY_COUNTY_PAGE
 } from "../../config/constants/Constants";
 
 import './AdminSideBar.scss';
@@ -356,6 +359,21 @@ class AdminSideBar extends Component {
                       <i className="fa fa-dashboard fa-fw" /> &nbsp;Treatment Description
                   </a>
               </li>
+
+              <li className="list-class">
+                  <a
+                      href=""
+                      className="side-bar__anchor-text"
+                      onClick={e => {
+                          e.preventDefault();
+                          this.props.handleSideBarClicked(DISPLAY_COUNTY_PAGE);
+                      }}
+                  >
+                      <i className="fa fa-dashboard fa-fw" /> &nbsp;Counties
+                  </a>
+              </li>
+
+
 
 
 

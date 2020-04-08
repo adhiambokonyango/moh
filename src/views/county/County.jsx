@@ -1,27 +1,29 @@
 import React, {Component} from 'react';
 
 import { connect } from "react-redux";
-import Modal from "react-awesome-modal";
+
 import PropTypes from "prop-types";
-import {fetchAllMeasure, registerMeasure} from "../../store/modules/measure/actions";
+import {fetchAllCounty, registerCounty} from "../../store/modules/county/actions";
 import Table from "../../components/table/table_body/Table";
 
-class Measure extends Component {
+
+class County extends Component {
 
     state = {
-        measureTitle:'',
+
+        countyTitle:'',
 
         tableData: [],
         tableHeaders: {
-            MeasureId:'#',
-            MeasureTitle:'measure'
+            CountyId:'#',
+            CountyTitle:'CountyTitle'
 
         }
     };
 
 
     componentDidMount() {
-        this.props.fetchAllMeasure();
+        this.props.fetchAllCounty();
     }
 
     // componentDidUpdate(prevProps) {
@@ -54,12 +56,11 @@ class Measure extends Component {
         e.preventDefault();
 
         const payload = {
-            MeasureTitle:this.state.measureTitle
+            CountyTitle:this.state.countyTitle
         };
 
-        this.props.registerMeasure(payload);
-        this.setState({measureTitle:''});
-
+        this.props.registerCounty(payload);
+        this.setState({countyTitle:''});
     };
 
     render() {
@@ -67,7 +68,7 @@ class Measure extends Component {
             <div>
                 <div className="login-panel panel panel-default">
                     <div className="panel-heading">
-                        <h3 className="panel-title">Register Measures</h3>
+                        <h3 className="panel-title">Register CountyTitle</h3>
                     </div>
                     <div className="panel-body">
                         <form
@@ -79,10 +80,10 @@ class Measure extends Component {
                             <fieldset>
                                 <div className="form-group">
                                     <input
-                                        name="measureTitle"
+                                        name="countyTitle"
                                         className="form-control"
-                                        placeholder="measureTitle"
-                                        value={this.state.measureTitle}
+                                        placeholder="countyTitle"
+                                        value={this.state.countyTitle}
                                         type="text"
                                         onChange={this.handleChange}
                                         autoFocus
@@ -101,36 +102,36 @@ class Measure extends Component {
                     </div>
                 </div>
 
-                <Table tableTitle='Registered Measures'
+                <Table tableTitle='Registered childrenTips'
                        tableHeaderObject={this.state.tableHeaders}
-                       tableData={this.props.registeredMeasure}/>
+                       tableData={this.props.registeredCounty}/>
             </div>
         );
     }
 }
 
 
-Measure.propTypes = {
-    registerMeasure: PropTypes.func.isRequired,
-    measureSuccessFullyRegistered: PropTypes.bool.isRequired,
-    fetchAllMeasure: PropTypes.func.isRequired,
-    registeredMeasure: PropTypes.arrayOf(PropTypes.object).isRequired,
+County.propTypes = {
+    registerCounty: PropTypes.func.isRequired,
+    countySuccessFullyRegistered: PropTypes.bool.isRequired,
+    fetchAllCounty: PropTypes.func.isRequired,
+    registeredCounty: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 
 const mapStateToProps = state => ({
-    measureSuccessFullyRegistered: state.measure.measureSuccessFullyRegistered,
-    registeredMeasure: state.measure.registeredMeasure
+    countySuccessFullyRegistered: state.county.countySuccessFullyRegistered,
+    registeredCounty: state.county.registeredCounty
 });
 
 
 
 const mapDispatchToProps = dispatch => ({
-    registerMeasure: payload => dispatch(registerMeasure(payload)),
-    fetchAllMeasure: () => dispatch(fetchAllMeasure())
+    registerCounty: payload => dispatch(registerCounty(payload)),
+    fetchAllCounty: () => dispatch(fetchAllCounty())
 });
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Measure);
+)(County);

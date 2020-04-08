@@ -4,7 +4,7 @@ import ChildrenTips from "../../views/children_tips/ChildrenTips";
 import AdminSideBar from "../sidebar/AdminSideBar";
 import {
     DISPLAY_CHILDREN_TIPS_DESCRIPTIONS_PAGE,
-    DISPLAY_CHILDREN_TIPS_PAGE,
+    DISPLAY_CHILDREN_TIPS_PAGE, DISPLAY_COUNTY_PAGE, DISPLAY_COUNTYDESCRIPTION_PAGE,
     DISPLAY_MEASURE_PAGE,
     DISPLAY_MEASUREDESCRIPTION_PAGE,
     DISPLAY_MYTHS_PAGE,
@@ -72,6 +72,8 @@ class Moh extends Component {
             this.props.history.push('/treatment');
         } else if(clickedItem === DISPLAY_TREATMENTDESCRIPTION_PAGE) {
             this.props.history.push('/treatmentDescription');
+        } else if(clickedItem === DISPLAY_COUNTY_PAGE) {
+            this.props.history.push('/county');
         }
     };
 
