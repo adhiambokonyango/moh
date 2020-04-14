@@ -28,6 +28,7 @@ import Treatment from "./views/treatment/Treatment";
 import TreatmentDescription from "./views/treatment_description/TreatmentDescription";
 import Moh from "./components/moh/Moh";
 import County from "./views/county/County";
+import CountyDeath from "./views/county_death/CountyDeath";
 
 
 
@@ -69,6 +70,7 @@ class App extends Component {
             <Route path="/treatment" exact component={Treatment} />
             <Route path="/treatmentDescription" exact component={TreatmentDescription} />
             <Route path="/county" exact component={County} />
+            <Route path="/countyDeath" exact component={CountyDeath} />
 
 
 

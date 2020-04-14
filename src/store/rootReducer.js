@@ -27,6 +27,7 @@ import { reducer as travel_description } from "./modules/travel_description";
 import { reducer as treatment } from "./modules/treatment";
 import { reducer as treatment_description } from "./modules/treatment_description";
 import { reducer as county } from "./modules/county";
+import { reducer as county_death } from "./modules/county_death";
 
 
 
@@ -67,6 +68,7 @@ const rootReducer = reduceReducers(
       treatment,
       treatment_description,
         county,
+        county_death
 
 
   })
